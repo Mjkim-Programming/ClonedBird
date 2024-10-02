@@ -1,5 +1,8 @@
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import styled from "styled-components"
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
     height: 100%;
@@ -44,11 +47,12 @@ const Error = styled.span`
 //! This is until 5:31 of 2-1 Froms and UI
 
 export default function CAccount() {
+    const navigate = useNavigate();
     const [isLoading, setLoading] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {target: {name,value}} = e;
@@ -61,12 +65,19 @@ export default function CAccount() {
         }
     }
 
-    const onSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async(e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if(isLoading || name === "" || email === "" || password === "") return;
         try {
-
+            setLoading(true);
+            const credentials = await createUserWithEmailAndPassword(auth, email, password);
+            console.log(credentials.user);
+            await updateProfile(credentials.user, {
+                displayName: name,
+            });
+            navigate("/");
         } catch(e) {
-
+            // setError("Error");
         } finally {
             setLoading(false);
         }
@@ -82,7 +93,7 @@ export default function CAccount() {
                     <Input name="password" onChange={onChange} value={password} placeholder="PassWord" type="password" required/>
                     <Input type="submit" onChange={onChange} value={isLoading ? "Loading..." : "Create Account"}/>
                 </Form>
-                {error !== "" ? <Error></Error>:null}
+                {/*{error !== "" ? <Error></Error>:null}*/}
             </Wrapper>
         </>
     )
