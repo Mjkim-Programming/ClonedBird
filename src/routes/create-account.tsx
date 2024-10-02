@@ -39,10 +39,10 @@ const Title = styled.h1`
     font-size: 42px;
 `;
 
-const Error = styled.span`
+ /* const Error = styled.span`
     font-weight: 600;
     color: tomato;
-`
+` */
 
 //! This is until 5:31 of 2-1 Froms and UI
 
